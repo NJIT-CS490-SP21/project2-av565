@@ -5,6 +5,7 @@ import io from 'socket.io-client';
 
 const socket = io();
 
+// Any prototypes FollowThisCase
 Array.prototype.AbsLength = function () {
     return this.filter(function (element) {
         return element != null;
@@ -33,24 +34,25 @@ export function showBoard() {
     document.getElementById("Board").style.display = "grid";
 }
 
-export function SomeFunction() {
-    const [myList, changeList] = useState([]);
-    const inputRef = useRef(null);
+// Unless it is the main function, every functionIsInThisCase
+export function BigBoard(pp) {
+    const [my_list, change_list] = useState([]);
+    const input_ref = useRef(null);
 
     function clicked(pos) {
-        if (myList.AbsLength() == 9) return;
-        var newList = [...myList];
-        if (!newList[pos])(newList.AbsLength() % 2) ? newList[pos] = "O" : newList[pos] = "X";
-        changeList(prevList => [...newList]);
-        socket.emit('clicked', newList = newList);
-        const winner = newList.TicTacToeWinner();
+        if (my_list.AbsLength() == 9) return;
+        var new_list = [...my_list];
+        if (!new_list[pos])(new_list.AbsLength() % 2) ? new_list[pos] = "O" : new_list[pos] = "X";
+        change_list(prev => [...new_list]);
+        socket.emit('clicked', new_list = new_list);
+        const winner = new_list.TicTacToeWinner();
         winner ? console.log(winner, "won!") : console.log("No winner yet!");
     }
 
     useEffect(() => {
         socket.on('clicked', (data) => {
             console.log("Clicked:", data);
-            changeList(prevList => [...data]);
+            change_list(prev => [...data]);
             const winner = data.TicTacToeWinner();
             winner ? console.log(winner, "won!") : console.log("No winner yet!");
         });
@@ -58,15 +60,15 @@ export function SomeFunction() {
 
     return (
         <div class="board" id="Board">
-            <Square func={() => clicked(0)} pos='0' arr={myList}/>
-            <Square func={() => clicked(1)} pos='1' arr={myList}/>
-            <Square func={() => clicked(2)} pos='2' arr={myList}/>
-            <Square func={() => clicked(3)} pos='3' arr={myList}/>
-            <Square func={() => clicked(4)} pos='4' arr={myList}/>
-            <Square func={() => clicked(5)} pos='5' arr={myList}/>
-            <Square func={() => clicked(6)} pos='6' arr={myList}/>
-            <Square func={() => clicked(7)} pos='7' arr={myList}/>
-            <Square func={() => clicked(8)} pos='8' arr={myList}/>
+            <Square func={() => clicked(0)} pos='0' arr={my_list}/>
+            <Square func={() => clicked(1)} pos='1' arr={my_list}/>
+            <Square func={() => clicked(2)} pos='2' arr={my_list}/>
+            <Square func={() => clicked(3)} pos='3' arr={my_list}/>
+            <Square func={() => clicked(4)} pos='4' arr={my_list}/>
+            <Square func={() => clicked(5)} pos='5' arr={my_list}/>
+            <Square func={() => clicked(6)} pos='6' arr={my_list}/>
+            <Square func={() => clicked(7)} pos='7' arr={my_list}/>
+            <Square func={() => clicked(8)} pos='8' arr={my_list}/>
         </div>
     );
 }
