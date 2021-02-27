@@ -1,9 +1,12 @@
 .board {
     width: 300px;
+    max-width: 300px;
     /* Total horizontal dimensions */
     height: 300px;
+    max-height: 300px;
     /* Total vertical dimensions */
-    display: grid;
+    /*display: grid;*/
+    display: none;
     /* Enables CSS Grid */
     grid-template-columns: repeat(3, 1fr);
     /* Total horizontal space broken into 3 columns */
@@ -13,5 +16,10 @@
 
 .box {
     border: 1px solid black;
+    font-family: Helvetica;
+    font-size: 500%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     /* Shows the lines in the CSS grid */
 }
