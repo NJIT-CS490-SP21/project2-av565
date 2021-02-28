@@ -13,27 +13,6 @@ Array.prototype.AbsLength = function () {
     }).length;
 }
 
-Array.prototype.TicTacToeWinner = function () {
-    const lines = [
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-        [0, 4, 8],
-        [2, 4, 6],
-    ];
-    for (let i = 0; i < lines.length; i++) {
-        const [a, b, c] = lines[i];
-        if (this[a] && this[a] === this[b] && this[a] === this[c]){
-            document.getElementById("resetGame").style.display = "block";
-            return this[a] + " Won!";
-        }
-    }
-    return null;
-}
-
 export function showBoard() {
     document.getElementById("Board").style.display = "grid";
     document.getElementById("GameInfo").style.display = "block";
@@ -45,7 +24,6 @@ export function BigBoard(pp) {
     var users = pp.users;
     const user = pp.current_user, [current_board, change_list] = useState([]), input_ref = useRef(null);
     socket.emit('username', users);
-    
     function clicked(pos) {
         if (current_board.AbsLength() == 9) return;
         var change_board = [...current_board];
@@ -62,7 +40,28 @@ export function BigBoard(pp) {
             }
         }
     }
-
+    
+    Array.prototype.TicTacToeWinner = function () {
+        const lines = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6],
+        ];
+        for (let i = 0; i < lines.length; i++) {
+            const [a, b, c] = lines[i];
+            if (this[a] && this[a] === this[b] && this[a] === this[c]){
+                if(user == users[0] || user == users[1]) document.getElementById("ResetButton").style.display = "block";
+                return this[a] + " Won!";
+            }
+        }
+        return null;
+    }
+    
     function ShowGameInfo(info_pp) {
         let x, y, spec, content;
         if (info_pp.len >= 1) {
@@ -79,9 +78,10 @@ export function BigBoard(pp) {
         return [x, y, spec];
     }
     
-    function resetGame(){
+    function reset_game(){
         change_list([]);
         socket.emit('clicked', []);
+        document.getElementById("ResetButton").style.display = "none";
     }
     
     useEffect(() => {
@@ -111,7 +111,7 @@ export function BigBoard(pp) {
                 <Square func={() => clicked(8)} pos='8' arr={current_board}/>
             </div>
             <h1>{(current_board.TicTacToeWinner()) ? current_board.TicTacToeWinner() : ""}</h1>
-            <button id="resetGame" class="resetGame" onClick={() => resetGame()}>Restart</button>
+            <button id="ResetButton" class="ResetButton" onClick={() => reset_game()}>Restart</button>
         </div>
     );
 }
