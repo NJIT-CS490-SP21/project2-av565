@@ -23,3 +23,10 @@
     justify-content: center;
     /* Shows the lines in the CSS grid */
 }
+
+.GameInfo {
+    display: none;
+}
+
+
+

@@ -38,6 +38,18 @@ def on_chat(data): # data is whatever arg you pass in your emit call on client
     # the client that emmitted the event that triggered this function
     socketio.emit('chat',  data, broadcast=True, include_self=False)
 
+user_list = []
+@socketio.on('addusername')
+def on_useradd(users):
+    print("Here:", users)
+    user_list.append(users)
+    socketio.emit('added_users', users, broadcast=True, include_self=False)
+
+@socketio.on('login_user')
+def on_login(usernames):
+    print("Usernames:", usernames)
+    socketio.emit('current_users', usernames, broadcast=True, include_self=False)
+
 # Listen for when a cell is clicked
 @socketio.on('clicked')
 def on_cell_click(data):
