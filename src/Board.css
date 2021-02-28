@@ -24,9 +24,7 @@
     /* Shows the lines in the CSS grid */
 }
 
-.GameInfo {
+.GameInfo, .resetGame {
     display: none;
 }
-
-
 
