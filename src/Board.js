@@ -3,7 +3,6 @@ import { useState, useRef, useEffect } from 'react';
 import { Square } from './Square.js';
 import io from 'socket.io-client';
 
-
 const socket = io();
 
 // Any prototypes FollowThisCase
@@ -22,8 +21,9 @@ export function showBoard() {
 export function BigBoard(pp) {
     const [who_won, set_who_won] = useState('');
     var users = pp.users;
-    const user = pp.current_user, [current_board, change_list] = useState([]), input_ref = useRef(null);
+    const user = pp.current_user, [current_board, change_list] = useState(Array(9)), input_ref = useRef(null);
     socket.emit('username', users);
+    
     function clicked(pos) {
         if (current_board.AbsLength() == 9) return;
         var change_board = [...current_board];
@@ -50,7 +50,7 @@ export function BigBoard(pp) {
             [1, 4, 7],
             [2, 5, 8],
             [0, 4, 8],
-            [2, 4, 6],
+            [2, 4, 6]
         ];
         for (let i = 0; i < lines.length; i++) {
             const [a, b, c] = lines[i];
@@ -59,6 +59,7 @@ export function BigBoard(pp) {
                 return this[a] + " Won!";
             }
         }
+        
         return null;
     }
     

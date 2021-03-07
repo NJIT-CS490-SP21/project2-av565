@@ -12,6 +12,7 @@ function App() {
   const [add_user_list, set_add_user_list] = useState([]);
   const [current_user_list, set_current_user_list] = useState([]);
   const [username, change_username] = useState('');
+  
   function checkInput() {
     var username_input = document.getElementById("username_input_field");
     if (username_input.value == "") {
