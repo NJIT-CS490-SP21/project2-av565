@@ -1,56 +1,69 @@
 import logo from './logo.svg';
-// import './App.css';
-import { BigBoard, showBoard } from './Board.js';
-import './Board.css';
-import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom'
+import './App.css';
+import { ListItem } from './ListItem.js';
+import { useState, useRef, useEffect } from 'react';
 import io from 'socket.io-client';
 
-const socket = io();
-// <p>Enter username: <input type = "text" required></input><button onClick = {showBoard}>Begin!</button></p>
+const socket = io(); // Connects to socket connection
+
 function App() {
-  const [add_user_list, set_add_user_list] = useState([]);
-  const [current_user_list, set_current_user_list] = useState([]);
-  const [username, change_username] = useState('');
-  
-  function checkInput() {
-    var username_input = document.getElementById("username_input_field");
-    if (username_input.value == "") {
-      document.getElementById("username_error").style.visibility = "visible";
-      return;
+  const [messages, setMessages] = useState([]); // State variable, list of messages
+  const inputRef = useRef(null); // Reference to <input> element
+  const joinRef = useRef(null); // Reference to <input> element
+  const [userList, setUserList] = useState([]);
+
+  function onClickButton() {
+    if (inputRef != null) {
+      const message = inputRef.current.value;
+      // If your own client sends a message, we add it to the list of messages to 
+      // render it on the UI.
+      setMessages(prevMessages => [...prevMessages, message]);
+      socket.emit('chat', { message: message });
     }
-    document.getElementById("username_error").style.visibility = "hidden";
   }
 
-  function submitted() {
-    if (document.getElementById("username_input_field").value != "") {
-      change_username(document.getElementById("username_input_field").value);
-      const temp = document.getElementById("username_input_field").value;
-      var new_users = [...current_user_list, temp];
-      set_current_user_list(new_users);
-      socket.emit('login_user', new_users);
-      document.getElementById("user_name_input").style.display = "none";
-      showBoard();
-      return;
+  function onClickJoin() {
+    if (joinRef != null) {
+      const username = joinRef.current.value;
+      socket.emit('join', { 'user': username });
     }
   }
-  
+
+  // The function inside useEffect is only run whenever any variable in the array
+  // (passed as the second arg to useEffect) changes. Since this array is empty
+  // here, then the function will only run once at the very beginning of mounting.
   useEffect(() => {
-    socket.on('current_users', (users) => {
-      console.log(users);
-      set_current_user_list(users);
+    // Listening for a chat event emitted by the server. If received, we
+    // run the code in the function that is passed in as the second arg
+    socket.on('chat', (data) => {
+      console.log('Chat event received!');
+      console.log(data);
+      // If the server sends a message (on behalf of another client), then we
+      // add it to the list of messages to render it on the UI.
+      setMessages(prevMessages => [...prevMessages, data.message]);
+    });
+
+    socket.on('user_list', (data) => {
+      console.log('User list event received!');
+      console.log(data);
+      setUserList(data.users);
     });
   }, []);
-  
+
   return (
-    <div id = "MainApp">
-      <div id="user_name_input">
-        <label>Enter username: </label>
-        <input type="text" placeholder="username" id="username_input_field" onChange={checkInput}/>
-        <input type="submit" value="Enter" id="submit_button" onClick={submitted}/>
-        <label id="username_error"> Please enter something!</label>
+    <div>
+      <h1>Chat Messages</h1>
+      Enter message here: <input ref={inputRef} type="text" />
+      <button onClick={onClickButton}>Send</button>
+      <ul>
+        {messages.map((item, index) => <ListItem key={index} name={item} />)}
+      </ul>
+      <div>
+        <h3>All Users (History)</h3>
+        Enter username here: <input ref = { joinRef } type="text" />
+        <button onClick={onClickJoin}>Join</button>
+        {userList.map((user, index) => <ListItem key={index} name={user} />)}
       </div>
-      <BigBoard current_user={username} users={current_user_list}/>
     </div>
   );
 }

@@ -101,6 +101,7 @@ export function BigBoard(pp) {
                 <p id="Specname">Spectators: {users.slice(2).join(", ")}</p>
             </div>
             <div class="board" id="Board">
+                {[...Array(9).keys()].map((value) => <Square func={() => clicked({value})} pos={value.toString()} arr={current_board}/>)}
                 <Square func={() => clicked(0)} pos='0' arr={current_board}/>
                 <Square func={() => clicked(1)} pos='1' arr={current_board}/>
                 <Square func={() => clicked(2)} pos='2' arr={current_board}/>
