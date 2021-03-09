@@ -21,7 +21,7 @@ export function showBoard() {
 export function BigBoard(pp) {
     const [who_won, set_who_won] = useState('');
     var users = pp.users;
-    const user = pp.current_user, [current_board, change_list] = useState(Array(9)), input_ref = useRef(null);
+    const user = pp.current_user, [current_board, change_list] = useState(Array(9)), input_ref = useRef(null), [scores, set_score] = useState({});
     socket.emit('username', users);
     
     function clicked(pos) {
@@ -90,6 +90,12 @@ export function BigBoard(pp) {
             change_list(prev => data);
             const winner = data.TicTacToeWinner();
             winner ? console.log(winner, "won!") : console.log("No winner yet!");
+            // console.log(scores);
+        });
+        socket.on('scores', (data) => {
+            console.log("Here:", data);
+            // set_score({...data});
+            // console.log(data);
         });
     }, []);
 
