@@ -88,7 +88,8 @@ def update_on_done(players):
     if len(players) == 2:
         winner = models.Person.query.filter_by(username=players[0]).first()
         winner.score += 1
-
+        db.session.commit()
+        
         loser = models.Person.query.filter_by(username=players[1]).first()
         loser.score -= 1
         db.session.commit()
