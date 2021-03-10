@@ -43,7 +43,7 @@ def on_connect():
     for person in all_people:
         scores[person.username] = person.score
     print(scores)
-    socketio.emit('scores', scores)
+    socketio.emit('scores', scores, broadcast=True)
 
 # When a client disconnects from this Socket connection, this function is run
 @socketio.on('disconnect')

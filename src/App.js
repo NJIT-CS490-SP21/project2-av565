@@ -11,6 +11,7 @@ const socket = io();
 function App() {
   const [add_user_list, set_add_user_list] = useState([]);
   const [current_user_list, set_current_user_list] = useState([]);
+  const [users, set_users] = useState({});
   const [username, change_username] = useState('');
   
   function checkInput() {
@@ -25,6 +26,7 @@ function App() {
   function submitted() {
     if (document.getElementById("username_input_field").value != "") {
       change_username(document.getElementById("username_input_field").value);
+      if(Object.keys(users).includes(username)) console.log("Is in db");
       const temp = document.getElementById("username_input_field").value;
       var new_users = [...current_user_list, temp];
       set_current_user_list(new_users);
@@ -39,6 +41,9 @@ function App() {
     socket.on('current_users', (users) => {
       console.log(users);
       set_current_user_list(users);
+    });
+    socket.on('scores', (users) => {
+      set_users(users);
     });
   }, []);
   

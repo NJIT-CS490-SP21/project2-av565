@@ -79,6 +79,11 @@ export function BigBoard(pp) {
         return [x, y, spec];
     }
     
+    function show_leaderboard(){
+        if(document.getElementById("leaderboard").style.display === "none") document.getElementById("leaderboard").style.display = "block";
+        else document.getElementById("leaderboard").style.display = "none";
+    }
+    
     function reset_game(){
         change_list([]);
         socket.emit('clicked', []);
@@ -87,18 +92,15 @@ export function BigBoard(pp) {
     
     useEffect(() => {
         socket.on('clicked', (data) => {
-            change_list(prev => data);
+            change_list(data);
             const winner = data.TicTacToeWinner();
             winner ? console.log(winner, "won!") : console.log("No winner yet!");
-            // console.log(scores);
         });
-        socket.on('scores', (data) => {
-            console.log("Here:", data);
-            // set_score({...data});
-            // console.log(data);
-        });
+        socket.on('scores', (data) => {set_score(data);});
     }, []);
-
+    
+    console.log(scores);
+    
     return (
         <div id="MainGame">
             <div class="GameInfo" id="GameInfo">
@@ -116,6 +118,21 @@ export function BigBoard(pp) {
                 <Square func={() => clicked(6)} pos='6' arr={current_board}/>
                 <Square func={() => clicked(7)} pos='7' arr={current_board}/>
                 <Square func={() => clicked(8)} pos='8' arr={current_board}/>
+            </div>
+            <button id="ShowLeaderboardButton" class="ShowLeaderboardButton" onClick={() => show_leaderboard()}>Show Leaderboard</button>
+            <div class="leaderboard" id="leaderboard">
+                <table>
+                    <tr>
+                        <th>Username</th>
+                        <th>Score</th>
+                    </tr>
+                    {Object.keys(scores).map((key, index) => (
+                        <tr>
+                            <td>{key}</td>
+                            <td>{scores[key]}</td>
+                        </tr>
+                    ))}
+                </table>
             </div>
             <h1>{(current_board.TicTacToeWinner()) ? current_board.TicTacToeWinner() : ""}</h1>
             <button id="ResetButton" class="ResetButton" onClick={() => reset_game()}>Restart</button>

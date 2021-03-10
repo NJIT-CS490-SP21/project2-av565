@@ -24,7 +24,7 @@
     /* Shows the lines in the CSS grid */
 }
 
-.GameInfo, .ResetButton {
+.GameInfo, .ResetButton, .leaderboard {
     display: none;
 }
 
