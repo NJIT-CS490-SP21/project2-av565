@@ -75,10 +75,27 @@ def on_login(usernames):
     socketio.emit('current_users', usernames, broadcast=True, include_self=False)
 
 @socketio.on('add_new_user_to_db')
-def add_user_to_db(username):
-    new_user = models.Person(username, score=None)
+def add_user_to_db(user_name):
+    print("Adding:", user_name)
+    new_user = models.Person(username=user_name, score=None)
     db.session.add(new_user)
     db.session.commit()
+    emit_db()
+    
+@socketio.on('game_over')
+def update_on_done(players):
+    print("Done:", players)
+    if len(players) == 2:
+        winner = models.Person.query.filter_by(username=players[0]).first()
+        winner.score += 1
+
+        loser = models.Person.query.filter_by(username=players[1]).first()
+        loser.score -= 1
+        db.session.commit()
+        emit_db()
+    # new_user = models.Person(username=user_name, score=None)
+    # db.session.add(new_user)
+    # db.session.commit()
     emit_db()
 
 # Listen for when a cell is clicked

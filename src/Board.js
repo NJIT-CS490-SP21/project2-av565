@@ -56,6 +56,7 @@ export function BigBoard(pp) {
             const [a, b, c] = lines[i];
             if (this[a] && this[a] === this[b] && this[a] === this[c]){
                 if(user == users[0] || user == users[1]) document.getElementById("ResetButton").style.display = "block";
+                (this[a] == 'X') ? socket.emit('game_over', [users[0], users[1]]) : socket.emit('update_db', [users[1], users[0]]);
                 return this[a] + " Won!";
             }
         }
