@@ -26,7 +26,7 @@ function App() {
   function submitted() {
     if (document.getElementById("username_input_field").value != "") {
       change_username(document.getElementById("username_input_field").value);
-      if(Object.keys(users).includes(document.getElementById("username_input_field").value)) console.log("Is in db");
+      if(!Object.keys(users).includes(document.getElementById("username_input_field").value)) socket.emit('add_new_user_to_db', document.getElementById("username_input_field").value);
       const temp = document.getElementById("username_input_field").value;
       var new_users = [...current_user_list, temp];
       set_current_user_list(new_users);

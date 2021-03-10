@@ -34,16 +34,19 @@ socketio = SocketIO(
 def index(filename):
     return send_from_directory('./build', filename)
 
-# When a client connects from this Socket connection, this function is run
-@socketio.on('connect')
-def on_connect():
-    print('User connected!')
+def emit_db():
     all_people = models.Person.query.all()
     scores = {}
     for person in all_people:
         scores[person.username] = person.score
     print(scores)
     socketio.emit('scores', scores, broadcast=True)
+
+# When a client connects from this Socket connection, this function is run
+@socketio.on('connect')
+def on_connect():
+    print('User connected!')
+    emit_db()
 
 # When a client disconnects from this Socket connection, this function is run
 @socketio.on('disconnect')
@@ -70,6 +73,13 @@ def on_useradd(users):
 def on_login(usernames):
     print("Usernames:", usernames)
     socketio.emit('current_users', usernames, broadcast=True, include_self=False)
+
+@socketio.on('add_new_user_to_db')
+def add_user_to_db(username):
+    new_user = models.Person(username, score=None)
+    db.session.add(new_user)
+    db.session.commit()
+    emit_db()
 
 # Listen for when a cell is clicked
 @socketio.on('clicked')
