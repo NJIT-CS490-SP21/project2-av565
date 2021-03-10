@@ -20,7 +20,7 @@ export function showBoard() {
 // Unless it is the main function, every functionIsInThisCase
 export function BigBoard(pp) {
     const [who_won, set_who_won] = useState('');
-    var users = pp.users;
+    var users = pp.users, runs = 0;
     const user = pp.current_user, [current_board, change_list] = useState(Array(9)), input_ref = useRef(null), [scores, set_score] = useState({});
     socket.emit('username', users);
     
@@ -55,8 +55,9 @@ export function BigBoard(pp) {
         for (let i = 0; i < lines.length; i++) {
             const [a, b, c] = lines[i];
             if (this[a] && this[a] === this[b] && this[a] === this[c]){
+                runs += 1;
                 if(user == users[0] || user == users[1]) document.getElementById("ResetButton").style.display = "block";
-                (this[a] == 'X') ? socket.emit('game_over', [users[0], users[1]]) : socket.emit('update_db', [users[1], users[0]]);
+                if(runs == 1) (this[a] == 'X') ? socket.emit('game_over', [users[0], users[1]]) : socket.emit('update_db', [users[1], users[0]]);
                 return this[a] + " Won!";
             }
         }
@@ -86,6 +87,7 @@ export function BigBoard(pp) {
     }
     
     function reset_game(){
+        runs = 0;
         change_list([]);
         socket.emit('clicked', []);
         document.getElementById("ResetButton").style.display = "none";
