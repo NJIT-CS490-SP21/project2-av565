@@ -4,6 +4,7 @@ from flask_socketio import SocketIO
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv, find_dotenv
+import operator # for reordering the scores table
 
 load_dotenv(find_dotenv()) # This is to load your env variables from .env
 
@@ -35,10 +36,11 @@ def index(filename):
     return send_from_directory('./build', filename)
 
 def emit_db():
-    all_people = models.Person.query.all()
+    all_people = db.session.query(models.Leaderboard).all()
     scores = {}
     for person in all_people:
         scores[person.username] = person.score
+    scores = dict(sorted(scores.items(), key = operator.itemgetter(1), reverse=True))
     print(scores)
     socketio.emit('scores', scores, broadcast=True)
 
@@ -69,41 +71,52 @@ def on_useradd(users):
     user_list.append(users)
     socketio.emit('added_users', users, broadcast=True, include_self=False)
 
+logged_in_users = []
+gamers = []
 @socketio.on('login_user')
 def on_login(usernames):
+    global gamers
+    global logged_in_users
     print("Usernames:", usernames)
+    logged_in_users = usernames
+    gamers = usernames[:2]
     socketio.emit('current_users', usernames, broadcast=True, include_self=False)
 
 @socketio.on('add_new_user_to_db')
 def add_user_to_db(user_name):
     print("Adding:", user_name)
-    new_user = models.Person(username=user_name, score=None)
+    new_user = models.Leaderboard(username=user_name, score=None)
     db.session.add(new_user)
     db.session.commit()
     emit_db()
-    
+
+counter = 0
 @socketio.on('game_over')
-def update_on_done(players):
-    print("Done:", players)
-    if len(players) == 2:
-        winner = models.Person.query.filter_by(username=players[0]).first()
+def update_on_done(who_won):
+    global counter
+    counter += 1
+    print("Winner:", who_won)
+    if counter == 1:
+        winner = db.session.query(models.Leaderboard).filter_by(username=who_won).first()
         winner.score += 1
         db.session.commit()
-        
-        loser = models.Person.query.filter_by(username=players[1]).first()
+        who_lost = [user for user in gamers if user != who_won][0]
+        print("Loser:", who_lost)
+        loser = db.session.query(models.Leaderboard).filter_by(username=who_lost).first()
         loser.score -= 1
         db.session.commit()
         emit_db()
     # new_user = models.Person(username=user_name, score=None)
     # db.session.add(new_user)
     # db.session.commit()
-    emit_db()
 
 # Listen for when a cell is clicked
 @socketio.on('clicked')
 def on_cell_click(data):
     print(str(data))
     socketio.emit('clicked', data, broadcast=True, include_self=False)
+
+
 
 # Note that we don't call app.run anymore. We call socketio.run with app arg
 

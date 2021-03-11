@@ -2,6 +2,14 @@ import React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { Square } from './Square.js';
 import io from 'socket.io-client';
+import {sortTable} from 'SortTable-master';
+
+// {Object.keys(scores).map((key, index) => (
+//     <tr>
+//         <td>{key}</td>
+//         <td>{scores[key]}</td>
+//     </tr>
+// ))}
 
 const socket = io();
 
@@ -20,9 +28,9 @@ export function showBoard() {
 // Unless it is the main function, every functionIsInThisCase
 export function BigBoard(pp) {
     const [who_won, set_who_won] = useState('');
-    var users = pp.users, runs = 0;
+    var users = pp.users, runs = 0, leaderboard_shown = false;
     const user = pp.current_user, [current_board, change_list] = useState(Array(9)), input_ref = useRef(null), [scores, set_score] = useState({});
-    socket.emit('username', users);
+    // socket.emit('username', users);
     
     function clicked(pos) {
         if (current_board.AbsLength() == 9) return;
@@ -57,7 +65,12 @@ export function BigBoard(pp) {
             if (this[a] && this[a] === this[b] && this[a] === this[c]){
                 runs += 1;
                 if(user == users[0] || user == users[1]) document.getElementById("ResetButton").style.display = "block";
-                if(runs == 1) (this[a] == 'X') ? socket.emit('game_over', [users[0], users[1]]) : socket.emit('update_db', [users[1], users[0]]);
+                if(runs == 1){
+                    if(this[a] == 'X' && user == users[0])
+                        socket.emit('game_over', users[0]);
+                    else if(this[a] == 'O' && user == users[1])
+                        socket.emit('game_over', users[1]);
+                }
                 return this[a] + " Won!";
             }
         }
@@ -82,8 +95,9 @@ export function BigBoard(pp) {
     }
     
     function show_leaderboard(){
-        if(document.getElementById("leaderboard").style.display === "none") document.getElementById("leaderboard").style.display = "block";
+        if(!leaderboard_shown) document.getElementById("leaderboard").style.display = "block";
         else document.getElementById("leaderboard").style.display = "none";
+        leaderboard_shown = !leaderboard_shown;
     }
     
     function reset_game(){
@@ -94,16 +108,14 @@ export function BigBoard(pp) {
     }
     
     useEffect(() => {
-        socket.on('clicked', (data) => {
-            change_list(data);
-            const winner = data.TicTacToeWinner();
-            winner ? console.log(winner, "won!") : console.log("No winner yet!");
-        });
+        socket.on('clicked', (data) => {change_list(data);});
         socket.on('scores', (data) => {set_score(data);});
     }, []);
     
-    console.log(scores);
-    
+    var scores_ordered = [];
+    Object.keys(scores).map((key, index) => scores_ordered.push([key, scores[key]]));
+    scores_ordered.sort(function compare(l, r){return r[1] - l[1];});
+    console.log(scores_ordered);
     return (
         <div id="MainGame">
             <div class="GameInfo" id="GameInfo">
@@ -124,17 +136,21 @@ export function BigBoard(pp) {
             </div>
             <button id="ShowLeaderboardButton" class="ShowLeaderboardButton" onClick={() => show_leaderboard()}>Show Leaderboard</button>
             <div class="leaderboard" id="leaderboard">
-                <table>
-                    <tr>
-                        <th>Username</th>
-                        <th>Score</th>
-                    </tr>
-                    {Object.keys(scores).map((key, index) => (
+                <table class="js-sort-table">
+                    <thead>
                         <tr>
-                            <td>{key}</td>
-                            <td>{scores[key]}</td>
+                            <th class="js-sort-string">Username</th>
+                            <th class="js-sort-number">Score</th>
                         </tr>
-                    ))}
+                    </thead>
+                    <tbody>
+                        {scores_ordered.map(value => (
+                            <tr>
+                                <td>{value[0]}</td>
+                                <td>{value[1]}</td>
+                            </tr>
+                        ))}
+                    </tbody>
                 </table>
             </div>
             <h1>{(current_board.TicTacToeWinner()) ? current_board.TicTacToeWinner() : ""}</h1>

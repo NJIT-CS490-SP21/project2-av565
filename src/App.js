@@ -46,7 +46,7 @@ function App() {
       set_users(users);
     });
   }, []);
-  
+
   return (
     <div id = "MainApp">
       <div id="user_name_input">
