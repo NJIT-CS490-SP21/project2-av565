@@ -24,6 +24,10 @@
     /* Shows the lines in the CSS grid */
 }
 
+.Xname, .Oname, .leaderboard_marker {
+    color: red;
+}
+
 .GameInfo, .ResetButton, .leaderboard {
     display: none;
 }

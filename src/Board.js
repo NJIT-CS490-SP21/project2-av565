@@ -25,6 +25,29 @@ export function showBoard() {
     document.getElementById("GameInfo").style.display = "block";
 }
 
+export function range(start, stop, step) {
+    if (typeof stop == 'undefined') {
+        // one param defined
+        stop = start;
+        start = 0;
+    }
+
+    if (typeof step == 'undefined') {
+        step = 1;
+    }
+
+    if ((step > 0 && start >= stop) || (step < 0 && start <= stop)) {
+        return [];
+    }
+
+    var result = [];
+    for (var i = start; step > 0 ? i < stop : i > stop; i += step) {
+        result.push(i);
+    }
+
+    return result;
+}
+
 // Unless it is the main function, every functionIsInThisCase
 export function BigBoard(pp) {
     const [who_won, set_who_won] = useState('');
@@ -71,7 +94,15 @@ export function BigBoard(pp) {
                     else if(this[a] == 'O' && user == users[1])
                         socket.emit('game_over', users[1]);
                 }
-                return this[a] + " Won!";
+                var return_string;
+                if(this[a] == 'X'){
+                    if(user == users[1]) return_string = users[0] + " Won :(";
+                    else if(user == users[0]) return_string = "You Won!";
+                }else{
+                    if(user == users[0]) return_string = users[1] + " Won :( ";
+                    else if(user == users[1]) return_string = " You Won!";
+                }
+                return return_string;
             }
         }
         
@@ -100,6 +131,27 @@ export function BigBoard(pp) {
         leaderboard_shown = !leaderboard_shown;
     }
     
+    function leaderboard_table(){
+        return (
+            <table class="js-sort-table">
+                <thead>
+                    <tr>
+                        <th class="js-sort-string">Username</th>
+                        <th class="js-sort-number">Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {scores_ordered.map(value =>
+                        <tr class={(user == value[0]) ? "leaderboard_marker" : ""}>
+                            <td>{value[0]}</td>
+                            <td>{value[1]}</td>
+                        </tr>
+                    )}
+                </tbody>
+            </table>
+        );
+    }
+    
     function reset_game(){
         runs = 0;
         change_list([]);
@@ -119,40 +171,15 @@ export function BigBoard(pp) {
     return (
         <div id="MainGame">
             <div class="GameInfo" id="GameInfo">
-                <p id="Xname">Player X: {users[0]}</p>
-                <p id="Oname">Player O: {users[1]}</p>
+                <p id="Xname" class={(user == users[0]) ? "Xname" : ""}>Player X: {users[0]} {(user == users[0]) ? "(You)" : ""}</p>
+                <p id="Oname" class={(user == users[1]) ? "Oname" : ""}>Player O: {users[1]} {(user == users[1]) ? "(You)" : ""}</p>
                 <p id="Specname">Spectators: {users.slice(2).join(", ")}</p>
             </div>
             <div class="board" id="Board">
-                <Square func={() => clicked(0)} pos='0' arr={current_board}/>
-                <Square func={() => clicked(1)} pos='1' arr={current_board}/>
-                <Square func={() => clicked(2)} pos='2' arr={current_board}/>
-                <Square func={() => clicked(3)} pos='3' arr={current_board}/>
-                <Square func={() => clicked(4)} pos='4' arr={current_board}/>
-                <Square func={() => clicked(5)} pos='5' arr={current_board}/>
-                <Square func={() => clicked(6)} pos='6' arr={current_board}/>
-                <Square func={() => clicked(7)} pos='7' arr={current_board}/>
-                <Square func={() => clicked(8)} pos='8' arr={current_board}/>
+                {range(9).map(i => <Square func = {() => clicked(i)} pos = {i.toString()} arr = {current_board}/>)}
             </div>
             <button id="ShowLeaderboardButton" class="ShowLeaderboardButton" onClick={() => show_leaderboard()}>Show Leaderboard</button>
-            <div class="leaderboard" id="leaderboard">
-                <table class="js-sort-table">
-                    <thead>
-                        <tr>
-                            <th class="js-sort-string">Username</th>
-                            <th class="js-sort-number">Score</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {scores_ordered.map(value => (
-                            <tr>
-                                <td>{value[0]}</td>
-                                <td>{value[1]}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+            <div class="leaderboard" id="leaderboard">{leaderboard_table()}</div>
             <h1>{(current_board.TicTacToeWinner()) ? current_board.TicTacToeWinner() : ""}</h1>
             <button id="ResetButton" class="ResetButton" onClick={() => reset_game()}>Restart</button>
         </div>
