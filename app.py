@@ -113,6 +113,9 @@ def update_on_done(who_won):
 # Listen for when a cell is clicked
 @socketio.on('clicked')
 def on_cell_click(data):
+    global counter
+    if not data:
+        counter = 0
     print(str(data))
     socketio.emit('clicked', data, broadcast=True, include_self=False)
 
