@@ -2,7 +2,7 @@ import React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { Square } from './Square.js';
 import io from 'socket.io-client';
-import {sortTable} from 'SortTable-master';
+import {sortTable} from './tableSorter/sort-table.js';
 
 // {Object.keys(scores).map((key, index) => (
 //     <tr>
