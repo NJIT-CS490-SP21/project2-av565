@@ -11,6 +11,8 @@ load_dotenv(find_dotenv()) # This is to load your env variables from .env
 app = Flask(__name__, static_folder='./build/static')
 # Point SQLAlchemy to your Heroku database
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+
+print(os.getenv('DATABASE_URL'))
 # Gets rid of a warning
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 

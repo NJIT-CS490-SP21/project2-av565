@@ -1,7 +1,14 @@
 # CS490 Project 2
 This app allows two players to login using any name, and to play tic-tac-toe against each other. Anyone who logs in after the first two, will be allowed to spectate the game, and wont be able to participate. Once the game ends (one player wins - or draws), the winner is shown/the draw is shown, and the players (NOT spectators) will have a button to restart the game.
 
-### Anywhere it says command: [some-command]., execute the some-command in your terminal!
+### Anywhere it says command(s): [some-command]., execute the some-command part only, on your bash terminal!
+
+## Prerequirements/Assumptions:
+1. You are using a terminal/command line that supports bash and its commands (Any linux distro), and have sudouser priviledge. The commands listed here won't work otherwise!!
+2. You have pip, and python installed. command: sudo apt install python3.
+3. pip. It should come default with python.
+4. npm. command: sudo apt install npm.
+5. GitHub repository. Once everything is working well on local, upload to GitHub _if_ you wish to deploy on heroku.
 
 ## Packages/Libraries Used (_SOME_ MAY HAVE ALREADY BEEN INSTALLED):
 ### cd into the root folder - folder that contains public/ and src/
@@ -12,8 +19,16 @@ This app allows two players to login using any name, and to play tic-tac-toe aga
 5. flask-cors: command: npm install -U flask-cors
 6. npm-socketio: command: npm install socket.io-client --save
 7. Flask command: npm install -U flask
-8. npm: command: npm install. You might need to do command: npm audit fix
-9. For everything else, and command: pip install -r requirements.txt
+8. Postgresql commands: 
+  i. sudo yum install postgresql postgresql-server postgresql-devel postgresql-contrib postgresql-docs
+  ii. sudo service postgresql initdb
+  iii. sudo service postgresql start
+  iv. sudo -u postgres createuser --superuser $USER. Might give an error - ignore.
+  v. sudo -u postgres createdb $USER
+9. node_modules folder: command: npm install. You might need to do command: npm audit fix
+10. psycopg2-binary: command: pip install psycopg2-binary
+11. SQLAlchemy: command: pip install Flask-SQLAlchemy==2.1
+12. For everything else: command: pip install -r requirements.txt
 
 #### Others _SHOULD_ be part of python:
 9. os
@@ -30,14 +45,26 @@ This app allows two players to login using any name, and to play tic-tac-toe aga
 4. Type a login name - can be anything (Cannot be the same as others')
 5. Click on Enter button and start playing.
 6. To play again, just click on restart button that will show up once the game is ended (someone won or draw).
-7. If you're lazy, just visit [my app on heroku](https://av565-project-2.herokuapp.com/).
+7. If you're lazy, just visit [my app on heroku](https://av565-project-2-2.herokuapp.com/).
+
+## Heroku Deployment:
+1. Push everything to your GitHub. Use the .gitignore file provided.
+2. Setup a heroku account:
+  i. Visit Heroku's login [website](https://id.heroku.com/login).
+  ii. If needed, create a new account.
+  iii. Go [here](https://dashboard.heroku.com/apps) to make sure login/creation worked properly.
+3. These commands:
+  i. heroku login -i
+  ii. heroku addons:create heroku-postgresql:hobby-dev
+  iii. heroku create. To rename: heroku apps:rename [whatever-name-you-want].
+4. heroku config > .env
+5. Edit your .env file so it looks like: DATABASE_URL=\"[contents-that-were-already-here]\" and delete everything else.
 
 ## Issues:
-- 1. I wanted to properly style everything (AGAIN, just like in project 1 milestone 1), and make everything fancy. I wanted to add a feature where it would show an X or an O when the correspondint player did a mouseover any of the available tiles.
-  2. I wanted to add the logout feature, but unfortunately was not able to figure it out.
-  3. Furthermore, I really wanted to add a chatbox that would allow players (and maybe even spectators) to talk to each other during a game.
-- 1. I was unable to properly make a login function. I had to try so many times, with different solutions, but ended up failing. In the end, after so many tries, I figured out how to send the username(s) from the client-side to the main server. I looked at how we did the homeworks and found how we sent the text.
-  2. Had a lot of trouble trying to properly process a click - things like allowing a user to only click on their turn, and disabling the click when its not their turn. I had to add a lot of conditions that felt like they would take forever, but in the end found a solution; I checked if it was a players's turn (using a turn-number %2) AND if the user clicking (the one logged in the current tab) was the one whos turn it was (from the list of users that was sent from App.js).
+- 1. Stylization is still needed, along with a logout function/feature.
+  2. Wanted to make it so that every user has their own table, all with their _own_ game-history. There would of course be a main leaderboard table whose primary keys would be the names of the tables. 
+- 1. Had major issues with the database. Had to run through all instructions multiple times before getting the app up and running properly.
+  2. Had even worse issues _once_ everything was setup and running properly: the game was updating too many times, with the winner and loser's scores increasing and decreasing way too many times. Took a little bit of "bad code" to fix it. Emitting only from the winner, along with a counter on the game side, and another counter to modify the database _only_ once. 
 
 
 
