@@ -20,11 +20,11 @@ This app allows two players to login using any name, and to play tic-tac-toe aga
 6. npm-socketio: command: npm install socket.io-client --save
 7. Flask command: npm install -U flask
 8. Postgresql commands: 
-  i. sudo yum install postgresql postgresql-server postgresql-devel postgresql-contrib postgresql-docs
-  ii. sudo service postgresql initdb
-  iii. sudo service postgresql start
-  iv. sudo -u postgres createuser --superuser $USER. Might give an error - ignore.
-  v. sudo -u postgres createdb $USER
+    1. sudo yum install postgresql postgresql-server postgresql-devel postgresql-contrib postgresql-docs
+    2. sudo service postgresql initdb
+    3. sudo service postgresql start
+    4. sudo -u postgres createuser --superuser $USER. Might give an error - ignore.
+    5. sudo -u postgres createdb $USER
 9. node_modules folder: command: npm install. You might need to do command: npm audit fix
 10. psycopg2-binary: command: pip install psycopg2-binary
 11. SQLAlchemy: command: pip install Flask-SQLAlchemy==2.1
@@ -50,13 +50,13 @@ This app allows two players to login using any name, and to play tic-tac-toe aga
 ## Heroku Deployment:
 1. Push everything to your GitHub. Use the .gitignore file provided.
 2. Setup a heroku account:
-  i. Visit Heroku's login [website](https://id.heroku.com/login).
-  ii. If needed, create a new account.
-  iii. Go [here](https://dashboard.heroku.com/apps) to make sure login/creation worked properly.
+    1. Visit Heroku's login [website](https://id.heroku.com/login).
+    2. If needed, create a new account.
+    3. Go [here](https://dashboard.heroku.com/apps) to make sure login/creation worked properly.
 3. These commands:
-  i. heroku login -i
-  ii. heroku addons:create heroku-postgresql:hobby-dev
-  iii. heroku create. To rename: heroku apps:rename [whatever-name-you-want].
+    1. heroku login -i
+    2. heroku addons:create heroku-postgresql:hobby-dev
+    3. heroku create. To rename: heroku apps:rename [whatever-name-you-want].
 4. heroku config > .env
 5. Edit your .env file so it looks like: DATABASE_URL=\"[contents-that-were-already-here]\" and delete everything else.
 
