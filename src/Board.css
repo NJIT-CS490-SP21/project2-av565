@@ -1,34 +1,37 @@
 .board {
-    width: 300px;
-    max-width: 300px;
-    /* Total horizontal dimensions */
-    height: 300px;
-    max-height: 300px;
-    /* Total vertical dimensions */
-    /*display: grid;*/
-    display: none;
-    /* Enables CSS Grid */
-    grid-template-columns: repeat(3, 1fr);
-    /* Total horizontal space broken into 3 columns */
-    grid-template-rows: repeat(3, 1fr);
-    /* Total vertical space broken into 3 rows */
+  width: 300px;
+  max-width: 300px;
+  /* Total horizontal dimensions */
+  height: 300px;
+  max-height: 300px;
+  /* Total vertical dimensions */
+  /*display: grid;*/
+  display: none;
+  /* Enables CSS Grid */
+  grid-template-columns: repeat(3, 1fr);
+  /* Total horizontal space broken into 3 columns */
+  grid-template-rows: repeat(3, 1fr);
+  /* Total vertical space broken into 3 rows */
 }
 
 .box {
-    border: 1px solid black;
-    font-family: Helvetica;
-    font-size: 500%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    /* Shows the lines in the CSS grid */
+  border: 1px solid black;
+  font-family: Helvetica;
+  font-size: 500%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Shows the lines in the CSS grid */
 }
 
-.Xname, .Oname, .leaderboard_marker {
-    color: red;
+.Xname,
+.Oname,
+.leaderboard_marker {
+  color: red;
 }
 
-.GameInfo, .ResetButton, .leaderboard {
-    display: none;
+.GameInfo,
+.ResetButton,
+.leaderboard {
+  display: none;
 }
-

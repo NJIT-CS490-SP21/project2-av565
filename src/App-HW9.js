@@ -1,14 +1,14 @@
-import logo from './logo.svg';
+import logo from "./logo.svg";
 // import './App.css';
-import {FoodList} from './listItem.js';
-import {useState, useRef} from 'react';
-import {SomeFunction} from './Board.js';
-import './Board.css';
+import { FoodList } from "./listItem.js";
+import { useState, useRef } from "react";
+import { SomeFunction } from "./Board.js";
+import "./Board.css";
 
 function App() {
   // const [myList, changeList] = useState([]);
   // const inputRef = useRef(null);
-  
+
   // function clicked(){
   //   changeList(prevList => [...prevList, "X"]);
   // }
@@ -22,9 +22,7 @@ function App() {
   //     </ul>
   //   </div>
   // );
-  return (
-    <SomeFunction/>
-  );
+  return <SomeFunction />;
 }
 
 export default App;
