@@ -10,8 +10,6 @@ from flask_socketio import SocketIO
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv, find_dotenv
-import models
-import global_variables
 load_dotenv(find_dotenv())  # This is to load your env variables from .env
 
 APP = Flask(__name__, static_folder='./build/static')
@@ -23,10 +21,15 @@ APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 DB = SQLAlchemy(APP)
 # IMPORTANT: This must be AFTER creating db variable to prevent
 # circular import issues
+import models
 
 DB.create_all()
 
 print("Created Database!")
+
+LOGGED_IN_USERS = []
+GAMERS = []
+COUNTER = 0
 
 CORS = CORS(APP, resources={r"/*": {"origins": "*"}})
 SOCKETIO = SocketIO(APP,
@@ -44,17 +47,20 @@ def index(filename):
     return send_from_directory('./build', filename)
 
 
+def configure_db(db):
+    scores = {}
+    for person in db:
+        scores[person.username] = person.score
+    scores = dict(
+        sorted(scores.items(), key=operator.itemgetter(1), reverse=True))
+    return scores
+
 def emit_db():
     """
     Emits the database to the clients so that their leaderboards are up-to-date.
     """
     all_people = DB.session.query(models.Leaderboard).all()
-    scores = {}
-    for person in all_people:
-        scores[person.username] = person.score
-    scores = dict(
-        sorted(scores.items(), key=operator.itemgetter(1), reverse=True))
-    print(scores)
+    scores = configure_db(all_people)
     SOCKETIO.emit('scores', scores, broadcast=True)
 
 
@@ -104,9 +110,17 @@ def on_useradd(users):
     :param users: The username string that is supposed to be added to the database.
     :return: None.
     """
+    global USER_LIST
     print("Here:", users)
     USER_LIST.append(users)
     SOCKETIO.emit('added_users', users, broadcast=True, include_self=False)
+
+
+def set_and_select_players(names):
+    global LOGGED_IN_USERS, GAMERS
+    LOGGED_IN_USERS = names
+    GAMERS = names[:2]
+    return [names, LOGGED_IN_USERS, GAMERS]
 
 
 @SOCKETIO.on('login_user')
@@ -118,11 +132,8 @@ def on_login(usernames):
     login.
     :return: None.
     """
-    print("Usernames:", usernames)
-    global_variables.LOGGED_IN_USERS = usernames
-    global_variables.GAMERS = usernames[:2]
     SOCKETIO.emit('current_users',
-                  usernames,
+                  set_and_select_players(usernames)[0],
                   broadcast=True,
                   include_self=False)
 
@@ -150,14 +161,15 @@ def update_on_done(who_won):
     :param who_won: Username of the person who won.
     :return: None.
     """
-    global_variables.COUNTER += 1
+    global COUNTER
+    COUNTER += 1
     print("Winner:", who_won)
-    if global_variables.COUNTER == 1:
+    if COUNTER == 1:
         winner = DB.session.query(
             models.Leaderboard).filter_by(username=who_won).first()
         winner.score += 1
         DB.session.commit()
-        who_lost = [user for user in global_variables.GAMERS if user != who_won][0]
+        who_lost = [user for user in GAMERS if user != who_won][0]
         print("Loser:", who_lost)
         loser = DB.session.query(
             models.Leaderboard).filter_by(username=who_lost).first()
@@ -178,7 +190,7 @@ def on_cell_click(data):
     :return: None.
     """
     if not data:
-        global_variables.COUNTER = 0
+        COUNTER = 0
     print(str(data))
     SOCKETIO.emit('clicked', data, broadcast=True, include_self=False)
 
