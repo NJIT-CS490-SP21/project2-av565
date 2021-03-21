@@ -47,9 +47,13 @@ def index(filename):
     return send_from_directory('./build', filename)
 
 
-def configure_db(db):
+def configure_db(data_base):
+    """
+    Configure the database, moving everything into a dictionary of username: score
+    key, value pairs.
+    """
     scores = {}
-    for person in db:
+    for person in data_base:
         scores[person.username] = person.score
     scores = dict(
         sorted(scores.items(), key=operator.itemgetter(1), reverse=True))
@@ -117,6 +121,12 @@ def on_useradd(users):
 
 
 def set_and_select_players(names):
+    """
+    Sets the people logged in, into their respective roles/spots.ArithmeticError
+    :param names: a list of all the people, including the new ones, who are logged in.
+    :return: A list of lists where [0] is the names, [1] is everyone logged in, and [2]
+    is the list of players who CAN play, 'X', and 'O'.
+    """
     global LOGGED_IN_USERS, GAMERS
     LOGGED_IN_USERS = names
     GAMERS = names[:2]
@@ -189,6 +199,7 @@ def on_cell_click(data):
     :param data: List of the current state of the TicTacToe board.
     :return: None.
     """
+    global COUNTER
     if not data:
         COUNTER = 0
     print(str(data))
