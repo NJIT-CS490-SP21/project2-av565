@@ -2,4 +2,4 @@
 .eslintrc.json
 .prettierrc.json
 .pylintrc
-yapf-formatter.py
+yapf_formatter.py

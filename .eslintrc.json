@@ -26,6 +26,6 @@
     "public/tableSorter/sort-table.min.js", // https://github.com/stationer/SortTable
     "src/App-HW9.js",
     "src/App.test.js",
-    "src/ListItem.js",
+    "src/ListItem.js"
   ]
 }
