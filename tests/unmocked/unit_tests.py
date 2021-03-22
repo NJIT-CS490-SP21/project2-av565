@@ -29,7 +29,7 @@ class Person:
         self.score = score
 
 
-class PlayerSelectionTest(unittest.TestCase):
+class PlayerTest(unittest.TestCase):
     def setUp(self):
         self.success_test_params1 = [{
             key_input: ["Me", "You", "The Beach", "Us", "Holding Hands"],
@@ -39,9 +39,9 @@ class PlayerSelectionTest(unittest.TestCase):
             key_length:
             12
         }, {
-            key_input: ["ESLint", "Sucks", "A55", "Foo"],
-            key_expected: [["ESLint", "Sucks", "A55", "Foo"],
-                           ["ESLint", "Sucks", "A55", "Foo"],
+            key_input: ["ESLint", "Sucks", "Bad", "Foo"],
+            key_expected: [["ESLint", "Sucks", "Bad", "Foo"],
+                           ["ESLint", "Sucks", "Bad", "Foo"],
                            ["ESLint", "Sucks"]],
             key_length:
             10

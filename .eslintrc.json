@@ -1,25 +1,29 @@
 {
-    "extends": "airbnb",
-    "env": {
-        "browser": true
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": ["plugin:react/recommended", "airbnb", "airbnb/hooks"],
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
     },
-    "overrides": [
-    {
-      "files": ["*.js"],
-      "rules": {
-        "react/no-array-index-key":"off",
-        "react-hooks/exhaustive-deps":"off",
-        "react/jsx-filename-extension":"off"
-      }
-    }
-    ],
-    "parser": "babel-eslint",
-    "parserOptions": {
-      "sourceType": "module",
-      "allowImportExportEverywhere": true,
-      "ecmaFeatures": {
-        "jsx": true,
-      },
-      "ecmaVersion": 12
-    }
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "plugins": ["react"],
+  "rules": {
+    "react/no-array-index-key": "off",
+    "react-hooks/exhaustive-deps": "off",
+    "react/jsx-filename-extension": "off"
+  },
+  "ignorePatterns": [
+    "src/index.js",
+    "src/reportWebVitals.js",
+    "src/setupTests.js",
+    // "src/App.js",
+    "src/Board.js",
+    // "src/Square.js",
+    "src/tableSorter/sort-table.js"
+  ]
 }

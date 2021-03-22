@@ -2,8 +2,8 @@
 Lays out the different table structures to be created within app.py
 """
 # pylint: disable=E1101, C0413, W1508, R0903, W0603
-
 from app import DB
+
 
 class Leaderboard(DB.Model):
     """
@@ -26,5 +26,4 @@ class Leaderboard(DB.Model):
         return '<Username %r>' % self.username
 
     def __str__(self):
-        return "Table name: {}\nColumns: {}, {}".format(
-            "Leaderboard", "Username", "Score")
+        return "Username: {}, Score: {}".format(self.username, self.score)
