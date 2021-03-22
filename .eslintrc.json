@@ -22,14 +22,13 @@
     "src/reportWebVitals.js",
     "src/setupTests.js",
     "src/RangeFunction.js", // since I did not write it. Got it from: https://stackoverflow.com/questions/8273047/javascript-function-similar-to-python-range
-    "public/tableSorter/sort-table.js",
-    "public/tableSorter/sort-table.min.js",
+    "public/tableSorter/sort-table.js", // These are from: 
+    "public/tableSorter/sort-table.min.js", // https://github.com/stationer/SortTable
     "src/App-HW9.js",
     "src/App.test.js",
     "src/ListItem.js",
     // "src/App.js",
     // "src/Board.js",
     // "src/Square.js",
-    "src/tableSorter/sort-table.js"
   ]
 }

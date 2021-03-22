@@ -1,3 +1,4 @@
+// Got it from: https://stackoverflow.com/questions/8273047/javascript-function-similar-to-python-range
 export function range(start, stop, step) {
   if (typeof stop === 'undefined') {
     // one param defined
