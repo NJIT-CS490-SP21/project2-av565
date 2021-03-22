@@ -70,6 +70,7 @@ This app allows two players to login using any name, and to play tic-tac-toe aga
 - MS3:
   1. I was unable to test the functionality of having duplicate users (not allow a user to login if another one is already logged in with the same username), so ended up having a boolean which I can simply turn on and off for the testing purpose. On the main deployed app, I will have the boolean set to FALSE, therefore, it _Will_ check for duplicates.
   2. Wish I had known ESLint was going to be a requirement since it would've made things so much easier.
+  #### I had to disable some eslint things like Array.prototype (and consequently the word this within the prototype definition) using the disable-next-line commend, and ignore some of the files/functions I got from other sources.
 
 
 
