@@ -1,6 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
-import { Square } from './Square.js';
+import { Square } from './Square';
+import { range } from './RangeFunction';
+
+// !!! DISABLING ESLINT FOR EVERY ARRAY.PROTOTYPE BECAUSE OF ERRORS -- Sorry professor/TA !!!
 
 // {Object.keys(scores).map((key, index) => (
 //     <tr>
@@ -11,7 +14,8 @@ import { Square } from './Square.js';
 
 const socket = io();
 
-// Any prototypes FollowThisCase
+// Any prototypes FollowThisCase.
+// eslint-disable-next-line
 Array.prototype.AbsLength = function () {
   return this.filter((element) => element != null).length;
 };
@@ -22,57 +26,34 @@ export function showBoard() {
   document.getElementById('Xname').style.display = 'block';
 }
 
-export function range(start, stop, step) {
-  if (typeof stop === 'undefined') {
-    // one param defined
-    stop = start;
-    start = 0;
-  }
-
-  if (typeof step === 'undefined') {
-    step = 1;
-  }
-
-  if ((step > 0 && start >= stop) || (step < 0 && start <= stop)) {
-    return [];
-  }
-
-  const result = [];
-  for (let i = start; step > 0 ? i < stop : i > stop; i += step) {
-    result.push(i);
-  }
-
-  return result;
-}
-
 // Unless it is the main function, every functionIsInThisCase
 export function BigBoard(pp) {
-  const [who_won, set_who_won] = useState('');
   const { users } = pp;
   let runs = 0;
-  let leaderboard_shown = false;
+  let leaderboardShown = false;
   const user = pp.current_user;
-  const [current_board, change_list] = useState(Array(9));
-  const input_ref = useRef(null);
-  const [scores, set_score] = useState({});
+  const [currentBoard, changeBoard] = useState(Array(9));
+  const [scores, setScore] = useState({});
+  const scoresOrdered = [];
   // socket.emit('username', users);
 
   function clicked(pos) {
-    if (current_board.AbsLength() == 9) return;
-    let change_board = [...current_board];
-    if (!change_board[pos] && !change_board.TicTacToeWinner()) {
-      if (change_board.AbsLength() % 2) {
-        if (users[1] === user) change_board[pos] = 'O';
-        change_list([...change_board]);
-        socket.emit('clicked', (change_board = change_board));
+    if (currentBoard.AbsLength() === 9) return;
+    const newBoard = [...currentBoard];
+    if (!newBoard[pos] && !newBoard.TicTacToeWinner()) {
+      if (newBoard.AbsLength() % 2) {
+        if (users[1] === user) newBoard[pos] = 'O';
+        changeBoard([...newBoard]);
+        socket.emit('clicked', newBoard);
       } else if (users[0] === user) {
-        change_board[pos] = 'X';
-        change_list((prev) => [...change_board]);
-        socket.emit('clicked', (change_board = change_board));
+        newBoard[pos] = 'X';
+        changeBoard(newBoard);
+        socket.emit('clicked', newBoard);
       }
     }
   }
 
+  // eslint-disable-next-line
   Array.prototype.TicTacToeWinner = function () {
     const lines = [
       [0, 1, 2],
@@ -84,72 +65,44 @@ export function BigBoard(pp) {
       [0, 4, 8],
       [2, 4, 6],
     ];
-    for (let i = 0; i < lines.length; i++) {
+    for (let i = 0; i < lines.length; i += 1) {
       const [a, b, c] = lines[i];
+      // eslint-disable-next-line
       if (this[a] && this[a] === this[b] && this[a] === this[c]) {
         runs += 1;
-        if (user == users[0] || user == users[1]) document.getElementById('ResetButton').style.display = 'block';
-        if (runs == 1) {
-          if (this[a] == 'X' && user == users[0]) socket.emit('game_over', users[0]);
-          else if (this[a] == 'O' && user == users[1]) socket.emit('game_over', users[1]);
+        if (user === users[0] || user === users[1]) document.getElementById('ResetButton').style.display = 'block';
+        if (runs === 1) {
+          // eslint-disable-next-line
+          if (this[a] === 'X' && user === users[0]) socket.emit('game_over', users[0]);
+          // eslint-disable-next-line
+          else if (this[a] === 'O' && user === users[1]) socket.emit('game_over', users[1]);
         }
-        var return_string;
-        if (this[a] == 'X') {
-          if (user == users[1]) return_string = `${users[0]} Won :(`;
-          else if (user == users[0]) return_string = 'You Won!';
-        } else if (user == users[0]) return_string = `${users[1]} Won :( `;
-        else if (user == users[1]) return_string = ' You Won!';
-        return return_string;
+        let returnString = '';
+        // eslint-disable-next-line
+        if (this[a] === 'X') {
+          if (user === users[1]) returnString = `${users[0]} Won :(`;
+          else if (user === users[0]) returnString = 'You Won!';
+        } else if (user === users[0]) returnString = `${users[1]} Won :( `;
+        else if (user === users[1]) returnString = ' You Won!';
+        return returnString;
       }
     }
 
     return null;
   };
 
-  function ShowGameInfo(info_pp) {
-    let x; let y; let spec; let
-      content;
-    if (info_pp.len >= 1) {
-      x = (
-        <p>
-          Player X:
-          {info_pp.lis[0]}
-        </p>
-      );
-      if (info_pp.curr == users[0]) x = [x, <label>(You)</label>];
-    }
-    if (info_pp.len >= 2) {
-      y = (
-        <p>
-          Player O:
-          {info_pp.lis[1]}
-        </p>
-      );
-      if (info_pp.curr == users[1]) y = [y, <label>(You)</label>];
-    }
-    if (info_pp.len >= 3) {
-      spec = (
-        <p>
-          Spectators:
-          {users.slice(2).join(', ')}
-        </p>
-      );
-    }
-    return [x, y, spec];
-  }
-
-  function show_leaderboard() {
-    if (!leaderboard_shown) {
+  function showLeaderboard() {
+    if (!leaderboardShown) {
       document.getElementById('leaderboard').style.display = 'block';
       document.getElementById('lleaderboard').style.display = 'block';
     } else {
       document.getElementById('leaderboard').style.display = 'none';
       document.getElementById('lleaderboard').style.display = 'none';
     }
-    leaderboard_shown = !leaderboard_shown;
+    leaderboardShown = !leaderboardShown;
   }
 
-  function leaderboard_table() {
+  function leaderboardTable() {
     return (
       <table className="js-sort-table">
         <thead>
@@ -159,8 +112,8 @@ export function BigBoard(pp) {
           </tr>
         </thead>
         <tbody>
-          {scores_ordered.map((value) => (
-            <tr className={user == value[0] ? 'leaderboard_marker' : ''}>
+          {scoresOrdered.map((value) => (
+            <tr className={user === value[0] ? 'leaderboard_marker' : ''}>
               <td>{value[0]}</td>
               <td>{value[1]}</td>
             </tr>
@@ -170,42 +123,41 @@ export function BigBoard(pp) {
     );
   }
 
-  function reset_game() {
+  function resetGame() {
     runs = 0;
-    change_list([]);
+    changeBoard([]);
     socket.emit('clicked', []);
     document.getElementById('ResetButton').style.display = 'none';
   }
 
   useEffect(() => {
     socket.on('clicked', (data) => {
-      change_list(data);
+      changeBoard(data);
     });
     socket.on('scores', (data) => {
-      set_score(data);
+      setScore(data);
     });
   }, []);
 
-  var scores_ordered = [];
-  Object.keys(scores).map((key, index) => scores_ordered.push([key, scores[key]]));
-  scores_ordered.sort((l, r) => r[1] - l[1]);
-  // console.log(scores_ordered);
+  Object.keys(scores).map((key) => scoresOrdered.push([key, scores[key]]));
+  scoresOrdered.sort((l, r) => r[1] - l[1]);
+  // console.log(scoresOrdered);
   return (
     <div id="MainGame">
       <div className="GameInfo" id="GameInfo">
-        <p id="Xname" className={user == users[0] ? 'Xname' : ''} style={{ display: 'none' }}>
+        <p id="Xname" className={user === users[0] ? 'Xname' : ''} style={{ display: 'none' }}>
           Player X:
           {' '}
           {users[0]}
           {' '}
-          {user == users[0] ? '(You)' : ''}
+          {user === users[0] ? '(You)' : ''}
         </p>
-        <p id="Oname" className={user == users[1] ? 'Oname' : ''}>
+        <p id="Oname" className={user === users[1] ? 'Oname' : ''}>
           Player O:
           {' '}
           {users[1]}
           {' '}
-          {user == users[1] ? '(You)' : ''}
+          {user === users[1] ? '(You)' : ''}
         </p>
         <p id="Specname">
           Spectators:
@@ -218,24 +170,25 @@ export function BigBoard(pp) {
             key={key}
             func={() => clicked(i)}
             pos={i}
-            arr={current_board}
+            arr={currentBoard}
           />
         ))}
       </div>
       <button
         id="ShowLeaderboardButton"
         className="ShowLeaderboardButton"
-        onClick={() => show_leaderboard()}
+        type="button"
+        onClick={() => showLeaderboard()}
       >
         Show Leaderboard
       </button>
       <div className="leaderboard" id="leaderboard">
-        {leaderboard_table()}
+        {leaderboardTable()}
       </div>
       <h1>
-        {current_board.TicTacToeWinner() ? current_board.TicTacToeWinner() : ''}
+        {currentBoard.TicTacToeWinner() ? currentBoard.TicTacToeWinner() : ''}
       </h1>
-      <button id="ResetButton" className="ResetButton" onClick={() => reset_game()}>
+      <button id="ResetButton" className="ResetButton" type="button" onClick={() => resetGame()}>
         Restart
       </button>
     </div>

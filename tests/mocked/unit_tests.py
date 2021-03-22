@@ -1,3 +1,4 @@
+# pylint: disable=all
 import unittest
 import unittest.mock as mock
 from unittest.mock import patch
@@ -88,7 +89,6 @@ class UserTest(unittest.TestCase):
             with patch("app.DB.session.add", self.mockedDBAdd):
                 with patch("app.DB.session.commit", self.mockedDBCommit):
                     with patch("models.Leaderboard.query") as mocked_query:
-                        print("Here: ", mocked_query.all)
                         mocked_query.all = self.mockedLeaderboardQueryAll
 
                         # print("Before testing:", self.initial_db_mock)

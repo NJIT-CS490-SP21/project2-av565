@@ -12,7 +12,7 @@ def absoluteLength(vals):
         return len(vals.keys()) + len(vals.values())
     if type(vals[0]) != list:
         return len(vals) * 2
-    return sum([len(arr) for arr in arr_of_arrs])
+    return sum([len(arr) for arr in vals])
 
 
 key_input = "input"

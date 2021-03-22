@@ -213,7 +213,7 @@ def update_on_done(who_won):
         loser = DB.session.query(
             models.Leaderboard).filter_by(username=who_lost).first()
 
-        win = change_points(winner, loser)
+        change_points(winner, loser)
     emit_db()
     # new_user = models.Person(username=user_name, score=None)
     # db.session.add(new_user)

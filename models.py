@@ -1,9 +1,10 @@
 """
 Lays out the different table structures to be created within app.py
 """
-# pylint: disable=E1101, C0413, W1508, R0903, W0603
-from app import DB
+# pylint: disable=E1101, C0413, W1508, R0903, W0603, R0401
+# had to add R0401 because of cyclic-import
 
+from app import DB
 
 class Leaderboard(DB.Model):
     """
