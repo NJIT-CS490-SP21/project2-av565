@@ -20,7 +20,7 @@ function App() {
   }
 
   function submitted() {
-    const stupid = true;
+    const stupid = false;
     const temp = document.getElementById('username_input_field').value;
     if (!stupid) {
       if (temp !== '') {

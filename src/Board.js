@@ -161,7 +161,7 @@ export function BigBoard(pp) {
         </p>
         <p id="Specname">
           Spectators:
-          {users.slice(2).join(', ')}
+          {users.slice(2).join(' , ')}
         </p>
       </div>
       <div className="board" id="Board">
